@@ -6,10 +6,14 @@ defmodule ArcticClientMintAdapter.MixProject do
       app: :arctic_client_mint_adapter,
       version: "0.1.0",
       elixir: "~> 1.13",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do
@@ -25,7 +29,8 @@ defmodule ArcticClientMintAdapter.MixProject do
       {:castore, "~> 0.1.0"},
       {:arctic_def, "~> 0.1.0"},
       {:arctic_client, "~> 0.1.0"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:mox, "~> 1.0", only: :test}
     ]
   end
 end
