@@ -19,6 +19,7 @@ ArcticClientMintAdapter.HTTPClientServer.request(channel.adapter.conn_pid, path,
 
 
 
+
 def deps do
   [
     {:arctic_client_mint_adapter, "~> 0.1.0"}
@@ -30,3 +31,10 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/arctic_client_mint_adapter>.
 
+TODO:
+[ ] Error handlings
+[ ] Support Extra options like timeout
+[ ] allow start the channel even if it fails
+[ ] Parsing the connection/request errors to a general struct
+[ ] Support tls
+[ ] Support Stream
