@@ -8,7 +8,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `arctic_client_mint_adapter` to your list of dependencies in `mix.exs`:
 
 ```elixir
-channel = %ArcticDef.Channel{ host: "localhost", port: 50051, adapter: %ArcticDef.StubAdapter{module: ArcticClientMintAdapter}, stub_module: nil }
+channel = %ArcticBase.Channel{ host: "localhost", port: 50051, adapter: %ArcticDef.StubAdapter{module: ArcticClientMintAdapter}, stub_module: nil }
 {:ok, channel} = ArcticClientMintAdapter.connect(channel)
 
 path = "/helloworld.Greeter/SayHello"

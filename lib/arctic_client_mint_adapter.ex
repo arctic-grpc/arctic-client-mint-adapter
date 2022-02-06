@@ -4,11 +4,11 @@ defmodule ArcticClientMintAdapter do
   HTTP2 connection using `Mint` library.
   """
 
-  @behaviour ArcticDef.StubAdapter
+  @behaviour ArcticBase.StubAdapter
 
-  alias ArcticDef.Channel
+  alias ArcticBase.Channel
 
-  @impl ArcticDef.StubAdapter
+  @impl ArcticBase.StubAdapter
   @spec connect(Channel.t()) :: {:ok, Channel.t()} | {:error, any}
   def connect(channel) do
     case do_connect(channel) do
