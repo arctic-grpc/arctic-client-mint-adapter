@@ -88,6 +88,10 @@ defmodule ArcticClientMintAdapter.HTTPClient do
   end
 
   defp mint_adapter do
-    Application.get_env(:arctic_client_mint_adapter, :mint_http2_adapter)
+    Application.get_env(
+      :arctic_client_mint_adapter,
+      :mint_http2_adapter,
+      ArcticClientMintAdapter.MintHTTP2
+    )
   end
 end
