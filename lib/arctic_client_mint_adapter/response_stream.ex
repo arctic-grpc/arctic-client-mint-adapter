@@ -60,7 +60,7 @@ defmodule ArcticClientMintAdapter.ResponseStream do
     data = state.response.data |> Enum.reverse() |> IO.iodata_to_binary()
     response = %{state.response | done: true, data: data}
     state = %{state | response: response}
-    GenServer.reply(state.request_caller, response)
+    GenServer.reply(state.request_caller, {:ok, response})
     {:stop, :normal, state}
   end
 

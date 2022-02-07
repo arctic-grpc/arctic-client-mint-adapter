@@ -21,6 +21,18 @@ defmodule ArcticClientMintAdapter do
     end
   end
 
+  @impl ArcticBase.StubAdapter
+  def request(channel, request) do
+    headers = [{"user-agent", "mint-grpc-elixir/0.1.0"} | request.headers]
+
+    ArcticClientMintAdapter.HTTPClientServer.request(
+      channel.adapter.conn_pid,
+      request.path,
+      request.body,
+      headers
+    )
+  end
+
   defp do_connect(channel) do
     opts = [schema: :http, hostname: channel.host, port: channel.port, opts: []]
     {:ok, pid} = ArcticClientMintAdapter.HTTPClientServer.start_link(opts)

@@ -55,7 +55,7 @@ defmodule ArcticClientMintAdapter.ResponseStreamTest do
       state = state_with_caller()
       assert {:stop, :normal, _state} = SUT.handle_info(:done, state)
 
-      assert_receive {:term, %ArcticBase.UnaryResponse{done: true}}
+      assert_receive {:term, {:ok, %ArcticBase.UnaryResponse{done: true}}}
     end
 
     test "sends the data in the correct order when sending it back to caller" do
@@ -64,7 +64,7 @@ defmodule ArcticClientMintAdapter.ResponseStreamTest do
       assert {_, state} = SUT.handle_info({:data, <<2>>}, state)
       assert {:stop, :normal, _state} = SUT.handle_info(:done, state)
 
-      assert_receive {:term, %ArcticBase.UnaryResponse{data: <<1, 2>>, done: true}}
+      assert_receive {:term, {:ok, %ArcticBase.UnaryResponse{data: <<1, 2>>, done: true}}}
     end
 
     test "terminates the server when receives stop" do
