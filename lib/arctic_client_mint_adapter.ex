@@ -53,7 +53,13 @@ defmodule ArcticClientMintAdapter do
   end
 
   defp do_connect(channel) do
-    opts = [schema: :http, hostname: channel.host, port: channel.port, opts: []]
+    opts = [
+      schema: channel.schema,
+      hostname: channel.host,
+      port: channel.port,
+      tls_options: channel.tls_options
+    ]
+
     {:ok, pid} = ArcticClientMintAdapter.HTTPClientServer.start_link(opts)
     :ok = ArcticClientMintAdapter.HTTPClientServer.check_connection_status(pid)
     {:ok, pid}

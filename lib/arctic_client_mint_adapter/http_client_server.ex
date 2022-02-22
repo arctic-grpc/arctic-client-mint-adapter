@@ -45,7 +45,7 @@ defmodule ArcticClientMintAdapter.HTTPClientServer do
 
   @impl GenServer
   def init(opts) do
-    state = HTTPClient.new(opts[:hostname], opts[:port], opts[:schema])
+    state = HTTPClient.new(opts[:hostname], opts[:port], opts[:schema], opts[:tls_options])
 
     {:ok, state, {:continue, :connect}}
   end
@@ -85,7 +85,7 @@ defmodule ArcticClientMintAdapter.HTTPClientServer do
   end
 
   @impl GenServer
-  def handle_info({:tcp, _, _} = message, state) do
+  def handle_info({socket_type, _, _} = message, state) when socket_type in [:tcp, :ssl] do
     case HTTPClient.stream(state, message) do
       {:ok, state, responses} ->
         HTTPClient.process_responses(state, responses)
@@ -94,7 +94,7 @@ defmodule ArcticClientMintAdapter.HTTPClientServer do
   end
 
   @impl GenServer
-  def handle_info({:tcp_closed, _}, state) do
+  def handle_info({closed, _}, state) when closed in [:tcp_closed, :ssl_closed] do
     # response_dispatcher = ResponseDispatcher.stop_all(state.response_dispatcher)
 
     state = schedule_reconnect(state)

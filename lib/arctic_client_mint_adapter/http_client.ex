@@ -9,16 +9,21 @@ defmodule ArcticClientMintAdapter.HTTPClient do
     def new(hostname, port, schema) do
       %__MODULE__{hostname: hostname, port: port, schema: schema}
     end
+
+    def new(hostname, port, schema) do
+      %__MODULE__{hostname: hostname, port: port, schema: schema}
+    end
   end
 
-  defstruct [:address, :conn, :conn_error, :response_dispatcher]
+  defstruct [:address, :tls_options, :conn, :conn_error, :response_dispatcher]
 
-  def new(hostname, port, schema) do
+  def new(hostname, port, schema, tls_options) do
     %__MODULE__{
       address: Address.new(hostname, port, schema),
       conn: nil,
       conn_error: nil,
-      response_dispatcher: ResponseDispatcher.new()
+      response_dispatcher: ResponseDispatcher.new(),
+      tls_options: tls_options
     }
   end
 
@@ -30,7 +35,8 @@ defmodule ArcticClientMintAdapter.HTTPClient do
     case mint_adapter().connect(
            client.address.schema,
            client.address.hostname,
-           client.address.port
+           client.address.port,
+           client.tls_options
          ) do
       {:ok, conn} ->
         %{client | conn: conn}

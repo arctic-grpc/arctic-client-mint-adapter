@@ -25,6 +25,12 @@ defmodule ArcticClientMintAdapter.MintHTTP2 do
   end
 
   @impl __MODULE__
+  def connect(schema, address, port, tls_configs) do
+    opts = [transport_opts: tls_configs]
+    Mint.HTTP2.connect(schema, address, port, opts)
+  end
+
+  @impl __MODULE__
   def request(conn, method, path, headers, body) do
     Mint.HTTP2.request(conn, method, path, headers, body)
   end
