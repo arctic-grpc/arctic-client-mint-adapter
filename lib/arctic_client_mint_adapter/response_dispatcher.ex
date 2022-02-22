@@ -25,9 +25,9 @@ defmodule ArcticClientMintAdapter.ResponseDispatcher do
     %__MODULE__{in_flight_requests: %{}, monitor_form_refs: %{}}
   end
 
-  @spec put(t, reference, GenServer.form()) :: {:ok, t, pid}
-  def put(state, ref, from) do
-    {:ok, pid} = ResponseStream.start(self(), from)
+  @spec put(t, reference, GenServer.form(), map) :: {:ok, t, pid}
+  def put(state, ref, from, response_stream_struct) do
+    {:ok, pid} = response_stream_struct.__struct__.start(response_stream_struct)
     monitor_ref = Process.monitor(pid)
     in_flight_requests = Map.put(state.in_flight_requests, ref, {pid, from, monitor_ref})
     monitor_form_refs = Map.put(state.monitor_form_refs, monitor_ref, ref)

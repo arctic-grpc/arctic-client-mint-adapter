@@ -46,10 +46,37 @@ defmodule ArcticClientMintAdapter.HTTPClient do
   def request(client, from, path, headers, body) do
     {:ok, conn, ref} = mint_adapter().request(client.conn, "POST", path, headers, body)
 
+    response_stream_struct =
+      ArcticClientMintAdapter.ResponseStream.new(
+        self(),
+        from
+      )
+
     {:ok, response_dispatcher, response_stream} =
-      ResponseDispatcher.put(client.response_dispatcher, ref, from)
+      ResponseDispatcher.put(client.response_dispatcher, ref, from, response_stream_struct)
 
     {:ok, %{client | conn: conn, response_dispatcher: response_dispatcher}, response_stream}
+  end
+
+  # TODO: handle erros like
+  # request failure
+  # 2. take care of max open connections
+  def request_stream(client, from, request) do
+    {:ok, conn, ref} =
+      mint_adapter().request(client.conn, "POST", request.path, request.headers, request.body)
+
+    response_stream_struct =
+      ArcticClientMintAdapter.ResponseStreamStream.new(
+        self(),
+        from,
+        :stream,
+        request.stream_reader_pid
+      )
+
+    {:ok, response_dispatcher, response_stream_pid} =
+      ResponseDispatcher.put(client.response_dispatcher, ref, from, response_stream_struct)
+
+    {:ok, %{client | conn: conn, response_dispatcher: response_dispatcher}, response_stream_pid}
   end
 
   def stream(client, message) do

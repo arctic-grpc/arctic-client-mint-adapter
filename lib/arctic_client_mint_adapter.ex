@@ -6,6 +6,8 @@ defmodule ArcticClientMintAdapter do
 
   @behaviour ArcticBase.StubAdapter
 
+  @user_agent "grpc-elixir/0.1.0 (mint/1.0; arctic-client)"
+
   alias ArcticBase.Channel
 
   @impl ArcticBase.StubAdapter
@@ -22,15 +24,32 @@ defmodule ArcticClientMintAdapter do
   end
 
   @impl ArcticBase.StubAdapter
-  def request(channel, request) do
-    headers = [{"user-agent", "mint-grpc-elixir/0.1.0"} | request.headers]
+  def request(channel, %ArcticBase.UnaryRequest{} = request) do
+    request = add_user_agent(request)
 
     ArcticClientMintAdapter.HTTPClientServer.request(
       channel.adapter.conn_pid,
       request.path,
       request.body,
-      headers
+      request.headers
     )
+  end
+
+  @impl ArcticBase.StubAdapter
+  def request(channel, %ArcticBase.StreamRequest{} = request) do
+    # headers = [{"user-agent", @user_agent} | request.headers]
+    # request = %{request | headers: headers}
+    request = add_user_agent(request)
+
+    ArcticClientMintAdapter.HTTPClientServer.request_stream(
+      channel.adapter.conn_pid,
+      add_user_agent(request)
+    )
+  end
+
+  defp add_user_agent(request) do
+    headers = [{"user-agent", @user_agent} | request.headers]
+    %{request | headers: headers}
   end
 
   defp do_connect(channel) do

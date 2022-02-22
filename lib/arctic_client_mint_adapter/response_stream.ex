@@ -7,7 +7,7 @@ defmodule ArcticClientMintAdapter.ResponseStream do
   use GenServer
   alias ArcticBase.UnaryResponse
 
-  defstruct [:response, :connection_pid, :request_caller]
+  defstruct [:response, :connection_pid, :request_caller, :type, :receiver_pid]
 
   @type t :: %__MODULE__{
           connection_pid: pid,
@@ -15,23 +15,25 @@ defmodule ArcticClientMintAdapter.ResponseStream do
           response: map
         }
 
-  @spec start(pid, GenServer.from()) :: GenServer.on_start()
-  def start(connection_pid, request_caller) do
-    GenServer.start(__MODULE__, [connection_pid, request_caller], [])
+  @spec start(t()) :: GenServer.on_start()
+  def start(%__MODULE__{} = struct) do
+    GenServer.start(__MODULE__, struct, [])
   end
 
-  defp new([connection_pid, request_caller]) do
+  def new(connection_pid, request_caller, type \\ :unray, receiver_pid \\ nil) do
     %__MODULE__{
       connection_pid: connection_pid,
       request_caller: request_caller,
-      response: %UnaryResponse{data: <<>>, headers: [], data: []}
+      receiver_pid: receiver_pid,
+      type: type,
+      response: %UnaryResponse{headers: [], data: []}
     }
   end
 
   @impl GenServer
-  def init(opts) do
+  def init(struct) do
     # TODO: Monitor the pid and exit when it's failed
-    {:ok, new(opts)}
+    {:ok, struct}
   end
 
   @impl GenServer

@@ -22,6 +22,14 @@ defmodule ArcticClientMintAdapter.HTTPClientServer do
   Make a unary request
   """
   @spec request(pid, String.t(), String.t(), keyword) :: {:ok, pid}
+  def request_stream(pid, request, timeout \\ 5000) do
+    GenServer.call(pid, {:request, :stream, request}, timeout)
+  end
+
+  @doc """
+  Make a unary request
+  """
+  @spec request(pid, String.t(), String.t(), keyword) :: {:ok, pid}
   def request(pid, path, body, headers, timeout \\ 5000) do
     try do
       GenServer.call(pid, {:request, :unary, path, body, headers}, timeout)
@@ -60,6 +68,13 @@ defmodule ArcticClientMintAdapter.HTTPClientServer do
   def handle_call({:request, :unary, _, _, _}, _from, %{conn: nil} = state) do
     # TODO: queue the call to be exeucted again
     {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_call({:request, :stream, request}, from, state) do
+    {:ok, state, _} = HTTPClient.request_stream(state, from, request)
+
+    {:reply, :ok, state}
   end
 
   @impl GenServer
