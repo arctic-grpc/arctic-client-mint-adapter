@@ -5,10 +5,10 @@ defmodule ArcticClientMintAdapterTest do
 
   describe "connect/1" do
     test "connects to server" do
-      channel = %ArcticBase.Channel{
+      channel = %Arctic.Base.Channel{
         host: "localhost",
         port: 50001,
-        adapter: %ArcticBase.StubAdapter{module: ArcticClientMintAdapter},
+        adapter: %Arctic.Base.StubAdapter{module: ArcticClientMintAdapter},
         stub_module: nil
       }
 

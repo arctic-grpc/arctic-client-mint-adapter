@@ -4,13 +4,13 @@ defmodule ArcticClientMintAdapter do
   HTTP2 connection using `Mint` library.
   """
 
-  @behaviour ArcticBase.StubAdapter
+  @behaviour Arctic.Base.StubAdapter
 
   @user_agent "grpc-elixir/0.1.0 (mint/1.0; arctic-client)"
 
-  alias ArcticBase.Channel
+  alias Arctic.Base.{Channel, ChannelError}
 
-  @impl ArcticBase.StubAdapter
+  @impl Arctic.Base.StubAdapter
   @spec connect(Channel.t()) :: {:ok, Channel.t()} | {:error, any}
   def connect(channel) do
     case do_connect(channel) do
@@ -23,8 +23,8 @@ defmodule ArcticClientMintAdapter do
     end
   end
 
-  @impl ArcticBase.StubAdapter
-  def request(channel, %ArcticBase.UnaryRequest{} = request) do
+  @impl Arctic.Base.StubAdapter
+  def request(channel, %Arctic.Base.UnaryRequest{} = request) do
     request = add_user_agent(request)
 
     ArcticClientMintAdapter.HTTPClientServer.request(
@@ -35,8 +35,8 @@ defmodule ArcticClientMintAdapter do
     )
   end
 
-  @impl ArcticBase.StubAdapter
-  def request(channel, %ArcticBase.StreamRequest{} = request) do
+  @impl Arctic.Base.StubAdapter
+  def request(channel, %Arctic.Base.StreamRequest{} = request) do
     # headers = [{"user-agent", @user_agent} | request.headers]
     # request = %{request | headers: headers}
     request = add_user_agent(request)
@@ -60,8 +60,9 @@ defmodule ArcticClientMintAdapter do
       tls_options: channel.tls_options
     ]
 
-    {:ok, pid} = ArcticClientMintAdapter.HTTPClientServer.start_link(opts)
-    :ok = ArcticClientMintAdapter.HTTPClientServer.check_connection_status(pid)
-    {:ok, pid}
+    with {:ok, pid} <- ArcticClientMintAdapter.HTTPClientServer.start_link(opts),
+         :ok <- ArcticClientMintAdapter.HTTPClientServer.check_connection_status(pid) do
+      {:ok, pid}
+    end
   end
 end

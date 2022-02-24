@@ -60,7 +60,7 @@ defmodule ArcticClientMintAdapter.HTTPClientServer do
   def handle_call(:check_connection_status, _from, state) do
     case state.conn_error do
       nil -> {:reply, :ok, state}
-      error -> {:reply, error, state}
+      error -> {:reply, {:error, error}, state}
     end
   end
 

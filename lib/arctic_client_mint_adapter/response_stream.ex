@@ -5,7 +5,7 @@ defmodule ArcticClientMintAdapter.ResponseStream do
   when `:done` is received to the `request_caller`
   """
   use GenServer
-  alias ArcticBase.UnaryResponse
+  alias Arctic.Base.UnaryResponse
 
   defstruct [:response, :connection_pid, :request_caller, :type, :receiver_pid]
 
