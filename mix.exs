@@ -27,7 +27,7 @@ defmodule ArcticClientMintAdapter.MixProject do
     [
       {:mint, "~> 1.0"},
       {:castore, "~> 0.1.0"},
-      {:arctic_base, "~> 0.1.0"},
+      {:arctic_base, github: "arctic-grpc/arctic-base"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:mox, "~> 1.0", only: :test}
     ]
