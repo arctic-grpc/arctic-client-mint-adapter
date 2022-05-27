@@ -4,13 +4,13 @@ defmodule ArcticClientMintAdapter do
   HTTP2 connection using `Mint` library.
   """
 
-  @behaviour Arctic.Base.StubAdapter
+  @behaviour Arctic.StubAdapter
 
   @user_agent "grpc-elixir/0.1.0 (mint/1.0; arctic-client)"
 
-  alias Arctic.Base.{Channel, ChannelError}
+  alias Arctic.{Channel, ChannelError}
 
-  @impl Arctic.Base.StubAdapter
+  @impl Arctic.StubAdapter
   @spec connect(Channel.t()) :: {:ok, Channel.t()} | {:error, any}
   def connect(channel) do
     case do_connect(channel) do
@@ -23,8 +23,8 @@ defmodule ArcticClientMintAdapter do
     end
   end
 
-  @impl Arctic.Base.StubAdapter
-  def request(channel, %Arctic.Base.UnaryRequest{} = request) do
+  @impl Arctic.StubAdapter
+  def request(channel, %Arctic.UnaryRequest{} = request) do
     request = add_user_agent(request)
 
     ArcticClientMintAdapter.HTTPClientServer.request(
@@ -35,8 +35,8 @@ defmodule ArcticClientMintAdapter do
     )
   end
 
-  @impl Arctic.Base.StubAdapter
-  def request(channel, %Arctic.Base.StreamRequest{} = request) do
+  @impl Arctic.StubAdapter
+  def request(channel, %Arctic.StreamRequest{} = request) do
     # headers = [{"user-agent", @user_agent} | request.headers]
     # request = %{request | headers: headers}
     request = add_user_agent(request)
